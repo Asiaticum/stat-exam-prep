@@ -10,7 +10,8 @@ Usage:
 
 Behavior:
   - Copies <source>/skills to the other two folders' skills directories.
-  - Normalizes text inside each skills directory so references use that folder name:
+  - Copies <source>/shared to the other two folders' shared directories when present.
+  - Normalizes text inside each synced skills/shared directory so references use that folder name:
       .claude/  .agent/  .agents/  -> <current-folder>/
 EOF
 }
@@ -37,45 +38,55 @@ fi
 
 ALL_DIRS=(.claude .agent .agents)
 
-copy_skills() {
+copy_subtree() {
   local src="$1"
   local dst="$2"
+  local name="$3"
+
+  if [[ ! -d "$src/$name" ]]; then
+    return 0
+  fi
+
   mkdir -p "$dst"
-  rm -rf "$dst/skills"
-  mkdir -p "$dst/skills"
+  rm -rf "$dst/$name"
+  mkdir -p "$dst/$name"
 
   if command -v rsync >/dev/null 2>&1; then
-    rsync -a --delete "$src/skills/" "$dst/skills/"
+    rsync -a --delete "$src/$name/" "$dst/$name/"
   else
-    cp -R "$src/skills/." "$dst/skills/"
+    cp -R "$src/$name/." "$dst/$name/"
   fi
 }
 
 normalize_folder_refs() {
   local folder="$1"
-  local skills_dir="$folder/skills"
-  [[ -d "$skills_dir" ]] || return 0
+  local sync_dir
 
-  if command -v rg >/dev/null 2>&1; then
-    while IFS= read -r -d '' file; do
-      perl -i -pe "s#\\.(?:claude|agent|agents)/#${folder}/#g" "$file"
-    done < <(rg -l -0 '\.(claude|agent|agents)/' "$skills_dir" || true)
-  else
-    while IFS= read -r file; do
-      perl -i -pe "s#\\.(?:claude|agent|agents)/#${folder}/#g" "$file"
-    done < <(
-      grep -Ilr \
-        -e '.claude/' \
-        -e '.agent/' \
-        -e '.agents/' \
-        "$skills_dir" || true
-    )
-  fi
+  for sync_dir in "$folder/skills" "$folder/shared"; do
+    [[ -d "$sync_dir" ]] || continue
+
+    if command -v rg >/dev/null 2>&1; then
+      while IFS= read -r -d '' file; do
+        perl -i -pe "s#\\.(?:claude|agent|agents)/#${folder}/#g" "$file"
+      done < <(rg -l -0 '\.(claude|agent|agents)/' "$sync_dir" || true)
+    else
+      while IFS= read -r file; do
+        perl -i -pe "s#\\.(?:claude|agent|agents)/#${folder}/#g" "$file"
+      done < <(
+        grep -Ilr \
+          -e '.claude/' \
+          -e '.agent/' \
+          -e '.agents/' \
+          "$sync_dir" || true
+      )
+    fi
+  done
 }
 
 for dir in "${ALL_DIRS[@]}"; do
   if [[ "$dir" != "$SOURCE" ]]; then
-    copy_skills "$SOURCE" "$dir"
+    copy_subtree "$SOURCE" "$dir" "skills"
+    copy_subtree "$SOURCE" "$dir" "shared"
   fi
 done
 
@@ -85,4 +96,7 @@ done
 
 echo "Done."
 echo "Source: $SOURCE/skills"
-echo "Synced: .claude/skills, .agent/skills, .agents/skills"
+if [[ -d "$SOURCE/shared" ]]; then
+  echo "Source: $SOURCE/shared"
+fi
+echo "Synced: .claude/{skills,shared}, .agent/{skills,shared}, .agents/{skills,shared}"
