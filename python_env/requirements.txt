@@ -1,0 +1,18 @@
+# Unified Python dependencies for statistics workbook
+# Includes both figure extraction and graph plotting capabilities
+
+# Image processing and OCR (for extract_figures)
+torch>=2.10.0
+torchvision>=0.25.0
+transformers>=5.1.0
+opencv-python>=4.13.0
+pillow>=12.1.0
+typer>=0.23.0
+
+# Statistical plotting and analysis
+matplotlib>=3.9.0
+seaborn>=0.13.0
+numpy>=2.0.0
+scipy>=1.14.0
+pandas>=2.2.0
+matplotlib-fontja>=1.1.0
