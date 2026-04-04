@@ -15,12 +15,12 @@ When a user reports that they made a mistake on a specific problem (e.g., "問 2
 ### 1. Identify the Problem and Context
 *   Locate the original problem in the corresponding LaTeX file within the `src/` directory.
 *   Understand the entire context of the problem, the correct solution, and where the user might have gone wrong (especially if they shared their thought process).
-*   If the user provides an image folder instead of a text reference, first normalize the images using the shared conversion script: `uv run .agents/skills/stats-weakness-analyzer/scripts/run_tool.py convert_to_jpg {folder_name}`. This Python wrapper automatically detects the OS and delegates to the shared implementation under `.agents/skills/stats-workbook-builder/scripts/`.
+*   If the user provides an image folder instead of a text reference, first normalize the images using the shared conversion script: `uv run .agents/shared/statistics-scripts/run_tool.py convert_to_jpg {folder_name}`. This Python wrapper automatically detects the OS and delegates to the shared implementation under `.agents/shared/statistics-scripts/`.
 
 ### 2. Output Structure & Output Files
 Generate a highly structured response to the user, AND simultaneously create a LaTeX document to compile these insights.
 *   **Directory Setup:** Create a new directory under `src/weakness-analysis/` for the specific problem or concept (e.g., `src/weakness-analysis/q2-3-distributions/`). Within it, create a `figures/` directory.
-*   **Shared Script Policy:** Reuse the shared script implementations under `.agents/skills/stats-workbook-builder/scripts/`. The local `scripts/` files in this skill are thin wrappers only; do not duplicate the core logic here.
+*   **Shared Script Policy:** Reuse the shared script implementations under `.agents/shared/statistics-scripts/`. Do not duplicate the core logic inside this skill directory.
 *   **First-time use:** Do not assume any existing `.tex` file already exists under `src/`. Start from the generalized template in `.agents/skills/stats-weakness-analyzer/assets/template.tex`.
 
 The content MUST use the following four sections in order, in both your chat response and the LaTeX document:

@@ -8,7 +8,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ProjectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
+$ProjectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 $PythonEnv = Join-Path $ProjectRoot "python_env"
 $ImageDir = Join-Path (Join-Path $ProjectRoot "images") $Subfolder
 $OutDir = Join-Path (Join-Path $ProjectRoot $DestDir) "figures"

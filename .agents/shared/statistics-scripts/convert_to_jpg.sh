@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SUBDIR="${1:-}"
-PROJECT_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 
 if [ -n "$SUBDIR" ]; then
     IMG_DIR="$PROJECT_ROOT/images/$SUBDIR"

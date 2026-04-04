@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""OS-aware wrapper for skill helper scripts."""
+"""OS-aware wrapper for shared statistics skill helper scripts."""
 
 from __future__ import annotations
 
