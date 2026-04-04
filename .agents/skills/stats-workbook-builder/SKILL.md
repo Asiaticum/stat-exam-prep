@@ -1,6 +1,6 @@
 ---
 name: stats-workbook-builder
-description: Converts problem images into a detailed LaTeX workbook specifically designed for Statistical Test Grade Pre-1 (統計検定準一級) preparation. Focuses on maximizing learning effectiveness through detailed explanations, strategic review points, and conceptual connections.
+description: Converts problem images into a detailed LaTeX workbook specifically designed for Statistical Test Grade Pre-1 (統計検定準一級) preparation. Focuses on maximizing learning effectiveness through detailed explanations, strategic review points, and conceptual connections. After delivering the workbook, it may optionally suggest the weakness-analyzer if the user still wants a separate weakness-remediation handout for a specific topic.
 license: MIT
 ---
 
@@ -36,6 +36,17 @@ This skill is specialized for creating high-quality study materials for the **St
     - `\newpage` to separate sections.
     - **Solution Section**: List all detailed solutions using plain section headings, short lead-in labels, `itemize`/`enumerate`, tables, and horizontal rules. Do not divide sections with `tcolorbox` or other boxed containers.
 6.  **Compile**: Use `lualatex` to generate the PDF within the subdirectory.
+
+## Post-Delivery UX: Optional Handoff to Weakness Analyzer
+
+After you deliver the workbook, use the following behavior:
+
+- If the user asks a small follow-up question about one line, one formula, or one step, answer directly in chat. Do **not** create another PDF or push a new workflow.
+- If the user says they still do not understand a specific point after reviewing the workbook, you may add one short optional suggestion such as:
+  - `必要なら、この論点だけを切り出した苦手対策資料も作れます。`
+  - `たとえば「主成分分析の寄与率の苦手対策資料を作成して」のように言ってもらえれば、そこだけに絞って作れます。`
+- Offer that suggestion only after the workbook has been produced and only when it fits the user's state.
+- Do not activate `stats-weakness-analyzer` unless the user explicitly asks for the dedicated weakness-remediation material.
 
 ## Learning Maximization Strategy for Solutions
 

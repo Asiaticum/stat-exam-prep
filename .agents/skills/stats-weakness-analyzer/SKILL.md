@@ -1,16 +1,24 @@
 ---
 name: stats-weakness-analyzer
-description: Analyzes incorrect answers from the Statistical Test Grade Pre-1 workbook, identifies core weaknesses, provides necessary formulas, generates visual explanations, creates similar practice problems, and compiles everything into a LaTeX PDF document in a dedicated directory. Use this skill when the user reports a problem they got wrong or asks for help understanding their mistake.
+description: Analyzes incorrect answers from the Statistical Test Grade Pre-1 workbook or past-exam materials, identifies core weaknesses, provides necessary formulas, generates visual explanations, creates similar practice problems, and compiles everything into a LaTeX PDF document in a dedicated directory. Use this skill when the user wants a dedicated weakness-remediation handout, for example "〇〇の苦手対策資料を作成して", especially after reviewing a workbook or past-exam explanation.
 license: MIT
 ---
 
 # Statistics Pre-1 Weakness Analyzer
 
-This skill is designed to provide targeted support when a user answers a problem incorrectly in the Statistical Test Grade Pre-1 (統計検定準一級) workbook. Its goal is to fundamentally resolve the user's weakness rather than just providing the correct answer, and to document this analysis as a compiled PDF.
+This skill is designed to provide targeted support when a user wants a dedicated 苦手対策資料 for the Statistical Test Grade Pre-1 (統計検定準一級). Its goal is to fundamentally resolve the user's weakness rather than just providing the correct answer, and to document this analysis as a compiled PDF.
+
+Do not use it for every clarification. If the user only wants a quick explanation in chat, keep the interaction in chat.
 
 ## Core Workflow
 
-When a user reports that they made a mistake on a specific problem (e.g., "問 2.3 を間違えた", "〇〇の概念がわからない"), strictly follow these steps:
+When a user asks for a dedicated weakness-remediation document after a mistake or unresolved confusion (e.g., "問 2.3 の苦手対策資料を作って", "尤度比検定の苦手対策資料を作成して"), strictly follow these steps:
+
+Before starting, apply this triage:
+
+- If the user is only asking a small clarification question, answer in chat and do **not** create files.
+- If the user asks for explanation only, defer to `stats-past-exam-explainer` or a normal chat answer depending on scope.
+- Use this skill when the user wants a separate study handout focused on a weakness, or when they accept such a proposal after another skill has finished delivering materials.
 
 ### 1. Identify the Problem and Context
 *   Locate the original problem in the corresponding LaTeX file within the `src/` directory.
@@ -81,3 +89,9 @@ The content MUST use the following four sections in order, in both your chat res
 *   **Encouraging but Rigorous:** Acknowledge that the concept is advanced (Grade Pre-1), but be uncompromising on mathematical correctness. Act as an expert tutor.
 *   **Language:** All communication MUST be in natural, professional Japanese.
 *   **Clarity:** Break down complex derivations into smaller, logical steps. Never skip algebraic manipulations that might confuse the user.
+
+## Relationship to Other Skills
+
+- `stats-workbook-builder` and `stats-past-exam-explainer` may optionally mention this skill **after** they finish delivering their main materials, if the user still seems stuck.
+- That mention is only a soft suggestion. This skill should activate only when the user explicitly asks for the separate weakness-remediation material.
+- If the user instead asks a narrow follow-up question, keep the interaction in chat and do not create a PDF.
