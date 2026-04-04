@@ -6,11 +6,12 @@
 .agent/rules
 .claude/settings*.json
 
+**/skill-creator/
+
 *.png
 *.jpg
 *.pdf
 *.heic
-*.tex
 *.aux
 *.log
 *.out
