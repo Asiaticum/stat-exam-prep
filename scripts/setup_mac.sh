@@ -39,6 +39,39 @@ ensure_mactex() {
     export PATH="/Library/TeX/texbin:$PATH"
 }
 
+refresh_mactex() {
+    echo "MacTeX を最新の TeX Live に更新します..."
+
+    if brew list --cask mactex-no-gui >/dev/null 2>&1; then
+        brew upgrade --cask mactex-no-gui || brew reinstall --cask mactex-no-gui
+    else
+        brew install --cask mactex-no-gui
+    fi
+
+    export PATH="/Library/TeX/texbin:$PATH"
+    hash -r
+}
+
+update_tlmgr_self() {
+    local output
+
+    if output="$(sudo tlmgr update --self 2>&1)"; then
+        printf '%s\n' "$output"
+        return
+    fi
+
+    printf '%s\n' "$output"
+
+    if [[ "$output" == *"Cross release updates are only supported"* ]]; then
+        echo "ローカルの TeX Live が古いため、MacTeX を更新してから再試行します..."
+        refresh_mactex
+        sudo tlmgr update --self
+        return
+    fi
+
+    return 1
+}
+
 install_texlive_packages() {
     local packages=(
         collection-langjapanese
@@ -50,7 +83,7 @@ install_texlive_packages() {
     )
 
     echo "TeX Live マネージャを更新します..."
-    sudo tlmgr update --self
+    update_tlmgr_self
 
     echo "この環境で必要な TeX Live パッケージをインストールします..."
     sudo tlmgr install "${packages[@]}"
