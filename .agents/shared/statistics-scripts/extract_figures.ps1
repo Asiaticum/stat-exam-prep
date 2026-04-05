@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [string]$Subfolder,
+    [string]$RelativePath,
 
     [Parameter(Mandatory = $true, Position = 1)]
     [string]$DestDir
@@ -10,7 +10,7 @@ param(
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 $PythonEnv = Join-Path $ProjectRoot "python_env"
-$ImageDir = Join-Path (Join-Path $ProjectRoot "images") $Subfolder
+$ImageDir = Join-Path (Join-Path $ProjectRoot "images") $RelativePath
 $OutDir = Join-Path (Join-Path $ProjectRoot $DestDir) "figures"
 $VenvPython = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
 

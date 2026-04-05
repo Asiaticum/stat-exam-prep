@@ -17,7 +17,7 @@ When a user asks about a past exam problem (e.g., "2021年6月の問1を教え�
 ### 1. Identify the Problem and User's State
 
 - **When an image or image folder is provided:**
-  - **CRITICAL FIRST STEP:** You MUST run the shared conversion script before reading the images: `uv run .agents/shared/statistics-scripts/run_tool.py convert_to_jpg {folder_name}`. This Python wrapper automatically detects the OS and delegates to the shared implementation under `.agents/shared/statistics-scripts/`.
+  - **CRITICAL FIRST STEP:** You MUST run the shared conversion script before reading the images: `uv run .agents/shared/statistics-scripts/run_tool.py convert_to_jpg {relative_path}`. Pass the path relative to `images/`, and keep nested subdirectories if present (for example, `past-exams/2021-06-q1`). This Python wrapper automatically detects the OS and delegates to the shared implementation under `.agents/shared/statistics-scripts/`.
   - _Then_, use the vision capabilities to read the converted `.jpg` images. Do NOT attempt to read images directly before running the conversion script.
   - Analyze the images to understand the specific past exam problem and the user's attempted solution.
 - **When text/reference is provided:**

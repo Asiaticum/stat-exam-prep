@@ -2,24 +2,24 @@
 # Extract figures (charts, graphs, images) from textbook photos.
 #
 # Usage:
-#   .agents/shared/statistics-scripts/extract_figures.sh <subfolder> <dest_dir>
+#   .agents/shared/statistics-scripts/extract_figures.sh <relative_path_under_images> <dest_dir>
 #
 # Example:
-#   .agents/shared/statistics-scripts/extract_figures.sh 15 src/textbook/15-stochastic-processes
+#   .agents/shared/statistics-scripts/extract_figures.sh textbook/15 src/textbook/15-stochastic-processes
 #
 # This will:
-#   1. Run extract_figures.py on images/<subfolder>/
+#   1. Run extract_figures.py on images/<relative_path_under_images>/
 #   2. Save cropped figures to <dest_dir>/figures/
 #   3. Print a JSON manifest to stdout listing extracted files
 
 set -euo pipefail
 
-SUBFOLDER="${1:?Usage: $0 <image_subfolder> <dest_dir>}"
-DEST_DIR="${2:?Usage: $0 <image_subfolder> <dest_dir>}"
+RELATIVE_PATH="${1:?Usage: $0 <relative_path_under_images> <dest_dir>}"
+DEST_DIR="${2:?Usage: $0 <relative_path_under_images> <dest_dir>}"
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 PYTHON_ENV="$PROJECT_ROOT/python_env"
-IMG_DIR="$PROJECT_ROOT/images/$SUBFOLDER"
+IMG_DIR="$PROJECT_ROOT/images/$RELATIVE_PATH"
 OUT_DIR="$PROJECT_ROOT/$DEST_DIR/figures"
 
 if [ ! -d "$IMG_DIR" ]; then

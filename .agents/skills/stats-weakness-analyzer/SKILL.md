@@ -23,7 +23,7 @@ Before starting, apply this triage:
 ### 1. Identify the Problem and Context
 *   Locate the original problem in the corresponding LaTeX file within the `src/` directory.
 *   Understand the entire context of the problem, the correct solution, and where the user might have gone wrong (especially if they shared their thought process).
-*   If the user provides an image folder instead of a text reference, first normalize the images using the shared conversion script: `uv run .agents/shared/statistics-scripts/run_tool.py convert_to_jpg {folder_name}`. This Python wrapper automatically detects the OS and delegates to the shared implementation under `.agents/shared/statistics-scripts/`.
+*   If the user provides an image folder instead of a text reference, first normalize the images using the shared conversion script: `uv run .agents/shared/statistics-scripts/run_tool.py convert_to_jpg {relative_path}`. Pass the path relative to `images/`, and keep nested subdirectories if present. This Python wrapper automatically detects the OS and delegates to the shared implementation under `.agents/shared/statistics-scripts/`.
 
 ### 2. Output Structure & Output Files
 Generate a highly structured response to the user, AND simultaneously create a LaTeX document to compile these insights.

@@ -10,9 +10,9 @@ This skill is specialized for creating high-quality study materials for the **St
 
 ## Core Workflow
 
-1.  **Analyze Images**: Scan the `images/{subfolder}` directory for problem images.
-    - **Image Conversion**: If images are in **HEIC or PNG** format, run the OS-aware wrapper: `uv run .agents/shared/statistics-scripts/run_tool.py convert_to_jpg {subfolder}`. For example, if images are in `images/22-pca`, run the script with `22-pca` as an argument. This converts files to JPG and **deletes the original source files** to keep the workspace clean.
-    - **Figure Extraction**: After conversion (or immediately if images are already JPG), run the OS-aware wrapper: `uv run .agents/shared/statistics-scripts/run_tool.py extract_figures {subfolder} src/textbook/{ChapterNumber}-{Topic}`. This saves cropped figures to `src/textbook/{ChapterNumber}-{Topic}/figures/` for use with `\includegraphics`. Review the extracted figures and delete any false positives.
+1.  **Analyze Images**: Scan the target directory under `images/`, using a relative path such as `images/{relative_path}`. Nested subdirectories are allowed.
+    - **Image Conversion**: If images are in **HEIC or PNG** format, run the OS-aware wrapper: `uv run .agents/shared/statistics-scripts/run_tool.py convert_to_jpg {relative_path}`. For example, if images are in `images/textbook/22-pca`, run the script with `textbook/22-pca` as the argument. This converts files to JPG and **deletes the original source files** to keep the workspace clean.
+    - **Figure Extraction**: After conversion (or immediately if images are already JPG), run the OS-aware wrapper: `uv run .agents/shared/statistics-scripts/run_tool.py extract_figures {relative_path} src/textbook/{ChapterNumber}-{Topic}`. This saves cropped figures to `src/textbook/{ChapterNumber}-{Topic}/figures/` for use with `\includegraphics`. Review the extracted figures and delete any false positives.
 2.  **Extract & Filter Content**:
     - **Scope**: Extract both **standard problems (問 X.Y)** and **example problems (例 X)**. Treat examples with the same rigorous detail as problems.
     - **NO External OCR**: Do NOT use external OCR tools. As an AI agent, use your own vision capabilities to read the mathematical content directly from the images.
@@ -268,13 +268,13 @@ When images contain charts, graphs, or diagrams that cannot be reasonably reprod
 **Step 1: Run the extraction script** early in the workflow (after conversion, before LaTeX generation):
 
 ```bash
-uv run .agents/shared/statistics-scripts/run_tool.py extract_figures {subfolder} src/textbook/{ChapterNumber}-{Topic}
+uv run .agents/shared/statistics-scripts/run_tool.py extract_figures {relative_path} src/textbook/{ChapterNumber}-{Topic}
 ```
 
-For example, for `images/15/`:
+For example, for `images/textbook/15/`:
 
 ```bash
-uv run .agents/shared/statistics-scripts/run_tool.py extract_figures 15 src/textbook/15-stochastic-processes
+uv run .agents/shared/statistics-scripts/run_tool.py extract_figures textbook/15 src/textbook/15-stochastic-processes
 ```
 
 This outputs cropped figure images to `src/textbook/{ChapterNumber}-{Topic}/figures/` and prints a JSON manifest listing extracted files.

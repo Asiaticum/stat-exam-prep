@@ -69,15 +69,32 @@ def find_targets(root: Path) -> list[Path]:
     return targets
 
 
+def resolve_images_root(relative_path: str) -> Path:
+    images_root = (Path.cwd() / "images").resolve()
+    target = (images_root / relative_path).resolve() if relative_path else images_root
+
+    try:
+        target.relative_to(images_root)
+    except ValueError as exc:
+        raise SystemExit(
+            f"Path must stay within ./images: {relative_path!r}"
+        ) from exc
+
+    return target
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Convert all non-JPG images under ./images or ./images/<subdir> to JPG."
+        description=(
+            "Convert all non-JPG images under ./images or a nested relative path "
+            "such as ./images/<topic>/<set> to JPG."
+        )
     )
     parser.add_argument(
         "subdir",
         nargs="?",
         default="",
-        help="Optional subdirectory under ./images to process.",
+        help="Optional relative path under ./images to process.",
     )
     parser.add_argument(
         "--quality",
@@ -100,7 +117,7 @@ def main() -> int:
     if not (1 <= args.quality <= 95):
         raise SystemExit("--quality must be in range 1..95")
 
-    root = (Path.cwd() / "images" / args.subdir).resolve()
+    root = resolve_images_root(args.subdir)
     if not root.exists():
         raise SystemExit(f"Directory does not exist: {root}")
     if not root.is_dir():

@@ -1,16 +1,17 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [string]$Subdir = ""
+    [string]$RelativePath = ""
 )
 
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+$ImagesRoot = Join-Path $ProjectRoot "images"
 
-if ([string]::IsNullOrWhiteSpace($Subdir)) {
-    $ImageDir = Join-Path $ProjectRoot "images"
+if ([string]::IsNullOrWhiteSpace($RelativePath)) {
+    $ImageDir = $ImagesRoot
 } else {
-    $ImageDir = Join-Path (Join-Path $ProjectRoot "images") $Subdir
+    $ImageDir = Join-Path $ImagesRoot $RelativePath
 }
 
 if (-not (Test-Path -LiteralPath $ImageDir -PathType Container)) {
@@ -19,7 +20,7 @@ if (-not (Test-Path -LiteralPath $ImageDir -PathType Container)) {
 
 Push-Location $ProjectRoot
 try {
-    & uv run .\convert_images_to_jpg.py $Subdir
+    & uv run .\convert_images_to_jpg.py $RelativePath
 } finally {
     Pop-Location
 }
