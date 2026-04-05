@@ -42,12 +42,12 @@ function Ensure-Uv {
         return
     }
 
-    Write-Host "uv が見つからないため、インストールします..."
+    Write-Host "uv was not found. Installing..."
     Invoke-RestMethod https://astral.sh/uv/install.ps1 | Invoke-Expression
     Add-ToPathIfExists (Join-Path $HOME ".local\bin")
 
     if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
-        throw "uv のインストールに失敗しました。新しい PowerShell を開いて再実行してください。"
+        throw "uv installation failed. Please restart PowerShell and try again."
     }
 }
 
@@ -56,15 +56,33 @@ function Ensure-TeXLive {
         return
     }
 
-    Write-Host "TeX Live をインストールします..."
+    Write-Host "TeX Live was not found. Installing..."
 
     $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("texlive-installer-" + [System.Guid]::NewGuid().ToString("N"))
+    $keepTempDir = $false
     New-Item -ItemType Directory -Path $tempDir | Out-Null
 
-    $installerPath = Join-Path $tempDir "install-tl-windows.exe"
+    $installerZipPath = Join-Path $tempDir "install-tl.zip"
     $profilePath = Join-Path $tempDir "texlive.profile"
 
-    Invoke-WebRequest -Uri "https://mirror.ctan.org/systems/texlive/tlnet/install-tl-windows.exe" -OutFile $installerPath
+    Invoke-WebRequest -Uri "https://mirror.ctan.org/systems/texlive/tlnet/install-tl.zip" -OutFile $installerZipPath
+    Expand-Archive -LiteralPath $installerZipPath -DestinationPath $tempDir -Force
+
+    $installerDir = Get-ChildItem -LiteralPath $tempDir -Directory |
+        Where-Object { $_.Name -like "install-tl-*" } |
+        Sort-Object Name -Descending |
+        Select-Object -First 1
+
+    if (-not $installerDir) {
+        $keepTempDir = $true
+        throw "Failed to unpack TeX Live installer. Check $tempDir."
+    }
+
+    $installerBatPath = Join-Path $installerDir.FullName "install-tl-windows.bat"
+    if (-not (Test-Path -LiteralPath $installerBatPath)) {
+        $keepTempDir = $true
+        throw "install-tl-windows.bat was not found after unpacking. Check $tempDir."
+    }
 
     $profile = @"
 selected_scheme scheme-full
@@ -77,10 +95,7 @@ TEXMFSYSVAR C:\texlive\$TeXLiveYear\texmf-var
 TEXMFVAR ~/.texlive$TeXLiveYear/texmf-var
 binary_x64_windows 1
 instopt_adjustpath 0
-instopt_desktop_integration 0
-instopt_file_assocs 0
 instopt_letter 0
-instopt_menu_integration 0
 instopt_portable 0
 tlpdbopt_autobackup 0
 tlpdbopt_install_docfiles 0
@@ -89,20 +104,51 @@ tlpdbopt_install_srcfiles 0
     Set-Content -LiteralPath $profilePath -Value $profile -Encoding ASCII
 
     try {
-        & $installerPath --no-gui --profile $profilePath
-    } finally {
-        Remove-Item -LiteralPath $tempDir -Recurse -Force -ErrorAction SilentlyContinue
-    }
+        $previousPreferOwn = $env:TEXLIVE_PREFER_OWN
+        $env:TEXLIVE_PREFER_OWN = "1"
+        try {
+            $installProcess = Start-Process -FilePath $installerBatPath `
+                -WorkingDirectory $installerDir.FullName `
+                -ArgumentList @("-no-gui", "-profile", $profilePath) `
+                -Wait `
+                -PassThru
+        } finally {
+            if ($null -eq $previousPreferOwn) {
+                Remove-Item Env:TEXLIVE_PREFER_OWN -ErrorAction SilentlyContinue
+            } else {
+                $env:TEXLIVE_PREFER_OWN = $previousPreferOwn
+            }
+        }
 
-    $texBin = Find-TeXLiveBin
-    if (-not $texBin) {
-        throw "TeX Live のインストール後に bin\windows を検出できませんでした。"
+        if ($installProcess.ExitCode -ne 0) {
+            $keepTempDir = $true
+            throw "TeX Live installer exited with code $($installProcess.ExitCode). See $tempDir for details."
+        }
+
+        $texBin = $null
+        for ($attempt = 0; $attempt -lt 24; $attempt++) {
+            $texBin = Find-TeXLiveBin
+            if ($texBin) {
+                break
+            }
+
+            Start-Sleep -Seconds 5
+        }
+
+        if (-not $texBin) {
+            $keepTempDir = $true
+            throw "TeX Live installer finished, but no bin\\windows directory was found. Check $tempDir for logs."
+        }
+    } finally {
+        if (-not $keepTempDir) {
+            Remove-Item -LiteralPath $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
 
     Add-ToPathIfExists $texBin
 
     if (-not (Get-Command lualatex -ErrorAction SilentlyContinue)) {
-        throw "TeX Live の PATH 設定に失敗しました。新しい PowerShell を開いて再実行してください。"
+        throw "TeX Live was installed, but lualatex is still not on PATH. Please restart PowerShell and try again."
     }
 }
 
@@ -113,18 +159,18 @@ function Install-TeXLivePackages {
     }
 
     if (-not (Get-Command tlmgr -ErrorAction SilentlyContinue)) {
-        throw "tlmgr が見つかりません。TeX Live のインストール状態を確認してください。"
+        throw "tlmgr was not found. Please verify the TeX Live installation."
     }
 
-    Write-Host "TeX Live マネージャを更新します..."
+    Write-Host "Updating TeX Live manager..."
     & tlmgr update --self | Out-Null
 
-    Write-Host "この環境で必要な TeX Live パッケージをインストールします..."
+    Write-Host "Installing required TeX Live packages..."
     & tlmgr install collection-langjapanese collection-latexrecommended collection-latexextra collection-pictures collection-fontsrecommended latexmk | Out-Null
 }
 
 function Run-PythonSetup {
-    Write-Host "Python 環境をセットアップします..."
+    Write-Host "Setting up the Python environment..."
     & uv python install 3.12
 
     $venvPython = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
@@ -136,7 +182,7 @@ function Run-PythonSetup {
 }
 
 function Run-LatexSmokeTest {
-    Write-Host "LuaLaTeX の動作確認を実行します..."
+    Write-Host "Running a LuaLaTeX smoke test..."
 
     $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ("math-study-smoke-" + [System.Guid]::NewGuid().ToString("N"))
     New-Item -ItemType Directory -Path $tmpDir | Out-Null
@@ -162,8 +208,8 @@ function Run-LatexSmokeTest {
 \usepackage{url}
 \geometry{left=25mm,right=25mm,top=30mm,bottom=30mm}
 \begin{document}
-\section*{動作確認}
-LuaLaTeX と日本語・数式パッケージの確認。
+\section*{Smoke Test}
+LuaLaTeX and common math packages are available.
 \[
   \int_0^1 x^2 \, dx = \frac{1}{3}
 \]
@@ -185,8 +231,8 @@ LuaLaTeX と日本語・数式パッケージの確認。
     }
 }
 
-Write-Host "=== Windows 数学学習環境セットアップ ==="
-Write-Host "プロジェクトルート: $ProjectRoot"
+Write-Host "=== Windows Math Study Environment Setup ==="
+Write-Host "Project root: $ProjectRoot"
 Write-Host ""
 
 Ensure-Uv
@@ -201,12 +247,12 @@ if ($texBin) {
 }
 
 Write-Host ""
-Write-Host "セットアップが完了しました。"
+Write-Host "Setup completed successfully."
 Write-Host ""
-Write-Host "次に行うこと:"
-Write-Host "  1. 新しい PowerShell を開いて PATH の変更を反映してください。"
-Write-Host "  2. 仮想環境を手動で確認したい場合は、次を実行してください:"
+Write-Host "Next steps:"
+Write-Host "  1. Open a new PowerShell session so PATH changes are applied."
+Write-Host "  2. If you want to activate the project virtual environment, run:"
 Write-Host "     .\.venv\Scripts\Activate.ps1"
-Write-Host "  3. Python 側の確認は、次で行えます:"
+Write-Host "  3. Verify the Python packages with:"
 Write-Host '     uv run python -c "import matplotlib_fontja, numpy, scipy, pandas"'
-Write-Host "  4. Python で図や補助スクリプトを実行するときは、引き続き uv を使ってください。"
+Write-Host "  4. Run your Python scripts with uv."
