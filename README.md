@@ -1,59 +1,15 @@
-# Math Study Environment Setup
+# 統計検定学習用ワークスペース
 
-このリポジトリでは、数式入り PDF の作成と、Python による図表生成をまとめて扱えるようにしています。
+このリポジトリは、日本語 LaTeX PDF の作成と、Python による図や補助スクリプトの実行に使います。
 
-- TeX: `LuaLaTeX` + 日本語対応
-- Python: `uv` + `.venv`
+## ディレクトリ構成
 
-セットアップスクリプトは、まだ自分の `.tex` ファイルやノートが何もない状態でも実行できます。スクリプト内部で一時ファイルを使って LuaLaTeX の確認まで自動で行います。
+- `setup/`: 環境構築用スクリプトと依存定義
+- `scripts/`: 実処理用の Python スクリプト
+- `images/`: 元画像
+- `src/`: 生成する教材
 
-## Files
-
-- macOS: [setup/setup_mac.sh](./setup/setup_mac.sh)
-- Windows: [setup/setup_windows.ps1](./setup/setup_windows.ps1)
-
-## What Gets Installed
-
-### Python side
-
-- `uv`
-- Python `3.12`
-- project local virtual environment: `.venv`
-- locked dependencies from `setup/requirements.lock`
-
-主な Python パッケージ:
-
-- `matplotlib`
-- `seaborn`
-- `numpy`
-- `scipy`
-- `pandas`
-- `matplotlib-fontja`
-- `opencv-python`
-- `pillow`
-- `torch`
-- `torchvision`
-- `transformers`
-
-### TeX side
-
-macOS:
-
-- `MacTeX`
-- 追加 TeX Live packages:
-  - `collection-langjapanese`
-  - `collection-latexrecommended`
-  - `collection-latexextra`
-  - `collection-pictures`
-  - `collection-fontsrecommended`
-  - `latexmk`
-
-Windows:
-
-- `TeX Live`
-- 上と同じ追加 package collection
-
-## Setup
+## セットアップ方法
 
 ### macOS
 
@@ -61,99 +17,39 @@ Windows:
 bash ./setup/setup_mac.sh
 ```
 
-このスクリプトが行うこと:
-
-- Homebrew の確認と導入
-- `uv` の確認と導入
-- `MacTeX` の導入
-- 必要な TeX Live package の導入
-- `.venv` 作成
-- Python 依存の同期
-- スクリプト内部の一時ファイルによる LuaLaTeX 動作確認
-
 ### Windows
 
-PowerShell を管理者権限で開いて実行してください。
+管理者権限の PowerShell で実行してください。
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File ".\setup\setup_windows.ps1"
+powershell -ExecutionPolicy Bypass -File .\setup\setup_windows.ps1
 ```
 
-このスクリプトが行うこと:
+## セットアップ内容
 
-- `uv` の確認と導入
-- 公式インストーラを使った `TeX Live` の導入
-- 必要な TeX Live package の導入
-- `.venv` 作成
-- Python 依存の同期
-- スクリプト内部の一時ファイルによる LuaLaTeX 動作確認
+- 必要なツールの確認と導入
+- LaTeX 実行環境の準備
+- プロジェクト用 `.venv` の作成
+- `setup/requirements.lock` に基づく Python 依存の同期
+- LuaLaTeX のスモークテスト
+- Python 環境のスモークテスト
 
-## After Setup
+セットアップ後の基本確認は、各セットアップスクリプトの中で自動実行されます。
 
-### Python verification
+## セットアップ後
 
-```bash
-uv run python -c "import matplotlib_fontja, numpy, scipy, pandas"
-```
+- Python スクリプトは `uv` を使って実行してください
+- 独自の `.tex` ファイルを試す場合は `lualatex <filename>.tex` を実行してください
 
-### LaTeX verification
+## 利用できるスキル
 
-LuaLaTeX の基本動作確認は、セットアップスクリプト内で自動実行されます。
+- `stats-workbook-builder`
+- `stats-past-exam-explainer`
+- `stats-weakness-analyzer`
 
-追加で自分のファイルを試したい場合だけ、任意の `.tex` ファイルを用意して `lualatex <filename>.tex` を実行してください。
+## スキルの使い分け
 
-## Notes
-
-- Python 実行はこのリポジトリでは `uv` を使ってください。
-- `matplotlib` で日本語を含む図を作るときは `import matplotlib_fontja` を入れてください。
-
-## Skills
-
-このリポジトリには、統計検定準一級向けの教材作成用 skill があります。
-
-### `stats-workbook-builder`
-
-教科書や問題集の画像から、まとまったワークブック PDF を作るときに使います。
-
-- 向いている場面:
-  - 画像をもとに章単位・トピック単位で学習資料を作りたい
-  - 問題文、詳しい解答、復習ポイントをまとめて整備したい
-- 依頼例:
-  - `この画像フォルダからワークブックを作って`
-  - `PCA の範囲を教材化して`
-
-### `stats-past-exam-explainer`
-
-過去問 1 問をしっかり解説した資料を作るときに使います。
-
-- 向いている場面:
-  - `2021年6月 問1` のように特定の過去問を詳しく解説したい
-  - 正答だけでなく、解法の流れや類題まで含めて整理したい
-- 依頼例:
-  - `2021年6月の問1を解説して`
-  - `この過去問の解説資料を作って`
-
-### `stats-weakness-analyzer`
-
-特定の苦手論点に絞った「苦手対策資料」を別途作りたいときに使います。
-
-- 向いている場面:
-  - ワークブックや過去問解説を読んだあとで、なお苦手な論点だけを補強したい
-  - 問題全体ではなく、特定の概念や解法パターンに絞って整理したい
-- 向いていない場面:
-  - その場で一言だけ確認したい
-  - 1ステップだけ軽く質問したい
-- 依頼例:
-  - `尤度比検定の苦手対策資料を作成して`
-  - `この問1で詰まった標本分散の扱いについて苦手対策資料を作って`
-
-## Skill Selection Guide
-
-どの skill を使うか迷ったら、次の基準で分けます。
-
-- 画像からまとまった教材を作るなら `stats-workbook-builder`
-- 特定の過去問を1問ずつ丁寧に解説するなら `stats-past-exam-explainer`
-- 特定の弱点だけを切り出して補強資料を作るなら `stats-weakness-analyzer`
-- 軽い質問や確認だけなら、skill を起動せずチャットでそのまま答える
-
-`stats-workbook-builder` と `stats-past-exam-explainer` は、資料を作ったあとに必要であれば `stats-weakness-analyzer` を自然に案内してよいですが、ユーザーが単にチャットで聞きたいだけのときはそちらを起動しません。
+- 画像からワークブックを作るときは `stats-workbook-builder`
+- 過去問 1 問を詳しく解説するときは `stats-past-exam-explainer`
+- 特定の苦手分野に絞った補強資料を作るときは `stats-weakness-analyzer`
+- 軽い質問や確認だけなら、そのままチャットでやり取りしてください

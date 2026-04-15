@@ -52,6 +52,11 @@ function Ensure-Uv {
 }
 
 function Ensure-TeXLive {
+    $existingTeXBin = Find-TeXLiveBin
+    if ($existingTeXBin) {
+        Add-ToPathIfExists $existingTeXBin
+    }
+
     if (Get-Command lualatex -ErrorAction SilentlyContinue) {
         return
     }
@@ -181,6 +186,12 @@ function Run-PythonSetup {
     & uv pip sync --python $venvPython (Join-Path $ProjectRoot "setup\requirements.lock")
 }
 
+function Run-PythonSmokeTest {
+    Write-Host "Running a Python smoke test..."
+    $venvPython = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
+    & $venvPython -c "import cv2, matplotlib_fontja, numpy, pandas, PIL, pillow_heif, scipy, torch, torchvision, transformers"
+}
+
 function Run-LatexSmokeTest {
     Write-Host "Running a LuaLaTeX smoke test..."
 
@@ -239,6 +250,7 @@ Ensure-Uv
 Ensure-TeXLive
 Install-TeXLivePackages
 Run-PythonSetup
+Run-PythonSmokeTest
 Run-LatexSmokeTest
 
 $texBin = Find-TeXLiveBin
@@ -253,6 +265,5 @@ Write-Host "Next steps:"
 Write-Host "  1. Open a new PowerShell session so PATH changes are applied."
 Write-Host "  2. If you want to activate the project virtual environment, run:"
 Write-Host "     .\.venv\Scripts\Activate.ps1"
-Write-Host "  3. Verify the Python packages with:"
-Write-Host '     uv run python -c "import matplotlib_fontja, numpy, scipy, pandas"'
+Write-Host "  3. The Python smoke test has already been completed by this script."
 Write-Host "  4. Run your Python scripts with uv."

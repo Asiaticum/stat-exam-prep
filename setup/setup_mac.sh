@@ -9,7 +9,7 @@ ensure_homebrew() {
         return
     fi
 
-    echo "Homebrew が見つからないため、インストールします..."
+    echo "Homebrew をインストールします..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     if [ -x /opt/homebrew/bin/brew ]; then
@@ -24,7 +24,7 @@ ensure_uv() {
         return
     fi
 
-    echo "uv が見つからないため、インストールします..."
+    echo "uv をインストールします..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
     export PATH="$HOME/.local/bin:$PATH"
 }
@@ -40,7 +40,7 @@ ensure_mactex() {
 }
 
 refresh_mactex() {
-    echo "MacTeX を最新の TeX Live に更新します..."
+    echo "MacTeX を更新します..."
 
     if brew list --cask mactex-no-gui >/dev/null 2>&1; then
         brew upgrade --cask mactex-no-gui || brew reinstall --cask mactex-no-gui
@@ -63,7 +63,7 @@ update_tlmgr_self() {
     printf '%s\n' "$output"
 
     if [[ "$output" == *"Cross release updates are only supported"* ]]; then
-        echo "ローカルの TeX Live が古いため、MacTeX を更新してから再試行します..."
+        echo "TeX Live が古いため、MacTeX を更新して再試行します..."
         refresh_mactex
         sudo tlmgr update --self
         return
@@ -85,7 +85,7 @@ install_texlive_packages() {
     echo "TeX Live マネージャを更新します..."
     update_tlmgr_self
 
-    echo "この環境で必要な TeX Live パッケージをインストールします..."
+    echo "必要な TeX Live パッケージをインストールします..."
     sudo tlmgr install "${packages[@]}"
 }
 
@@ -105,8 +105,13 @@ run_python_setup() {
     uv pip sync --python "$PROJECT_ROOT/.venv/bin/python" "$PROJECT_ROOT/setup/requirements.lock"
 }
 
+run_python_smoke_test() {
+    echo "Running a Python smoke test..."
+    "$PROJECT_ROOT/.venv/bin/python" -c "import cv2, matplotlib_fontja, numpy, pandas, PIL, pillow_heif, scipy, torch, torchvision, transformers"
+}
+
 run_latex_smoke_test() {
-    echo "LuaLaTeX の動作確認を実行します..."
+    echo "LuaLaTeX のスモークテストを実行します..."
 
     local tmp_dir
     tmp_dir="$(mktemp -d)"
@@ -133,8 +138,8 @@ run_latex_smoke_test() {
 \usepackage{url}
 \geometry{left=25mm,right=25mm,top=30mm,bottom=30mm}
 \begin{document}
-\section*{動作確認}
-LuaLaTeX と日本語・数式パッケージの確認。
+\section*{Smoke Test}
+LuaLaTeX and common math packages are available.
 \[
   \int_0^1 x^2 \, dx = \frac{1}{3}
 \]
@@ -150,8 +155,8 @@ EOF
 }
 
 main() {
-    echo "=== macOS 数学学習環境セットアップ ==="
-    echo "プロジェクトルート: $PROJECT_ROOT"
+    echo "=== macOS Math Study Environment Setup ==="
+    echo "Project root: $PROJECT_ROOT"
     echo ""
 
     ensure_homebrew
@@ -159,19 +164,19 @@ main() {
     ensure_mactex
     install_texlive_packages
     run_python_setup
+    run_python_smoke_test
     run_latex_smoke_test
 
     echo ""
-    echo "セットアップが完了しました。"
+    echo "Setup completed successfully."
     echo ""
-    echo "次に行うこと:"
-    echo "  1. シェルを再起動するか、次を実行して PATH を反映してください:"
+    echo "Next steps:"
+    echo "  1. Open a new shell if PATH changes need to be applied:"
     echo "     export PATH=\"/Library/TeX/texbin:\$HOME/.local/bin:\$PATH\""
-    echo "  2. 仮想環境を手動で確認したい場合は、次を実行してください:"
+    echo "  2. If you want to activate the project virtual environment, run:"
     echo "     source \"$PROJECT_ROOT/.venv/bin/activate\""
-    echo "  3. Python 側の確認は、次で行えます:"
-    echo "     uv run python -c \"import matplotlib_fontja, numpy, scipy, pandas\""
-    echo "  4. Python で図や補助スクリプトを実行するときは、引き続き uv を使ってください。"
+    echo "  3. The Python smoke test has already been completed by this script."
+    echo "  4. Run your Python scripts with uv."
 }
 
 main "$@"
