@@ -69,8 +69,12 @@ def find_targets(root: Path) -> list[Path]:
     return targets
 
 
+def project_root() -> Path:
+    return Path(__file__).resolve().parent.parent
+
+
 def resolve_images_root(relative_path: str) -> Path:
-    images_root = (Path.cwd() / "images").resolve()
+    images_root = (project_root() / "images").resolve()
     target = (images_root / relative_path).resolve() if relative_path else images_root
 
     try:

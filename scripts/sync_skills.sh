@@ -4,9 +4,9 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  ./sync_skills.sh .claude
-  ./sync_skills.sh .agent
-  ./sync_skills.sh .agents
+  ./scripts/sync_skills.sh .claude
+  ./scripts/sync_skills.sh .agent
+  ./scripts/sync_skills.sh .agents
 
 Behavior:
   - Copies <source>/skills to the other two folders' skills directories.
@@ -20,6 +20,9 @@ if [[ $# -ne 1 ]]; then
   usage
   exit 1
 fi
+
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_ROOT"
 
 SOURCE="${1%/}"
 case "$SOURCE" in

@@ -20,7 +20,7 @@ if (-not (Test-Path -LiteralPath $ImageDir -PathType Container)) {
 
 Push-Location $ProjectRoot
 try {
-    & uv run .\convert_images_to_jpg.py $RelativePath
+    & uv run .\scripts\convert_images_to_jpg.py $RelativePath
 } finally {
     Pop-Location
 }

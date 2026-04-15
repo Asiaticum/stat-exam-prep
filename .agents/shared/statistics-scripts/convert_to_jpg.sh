@@ -18,4 +18,4 @@ if [ ! -d "$IMG_DIR" ]; then
 fi
 
 cd "$PROJECT_ROOT"
-uv run ./convert_images_to_jpg.py "$RELATIVE_PATH"
+uv run ./scripts/convert_images_to_jpg.py "$RELATIVE_PATH"
