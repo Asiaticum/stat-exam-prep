@@ -11,7 +11,7 @@ This repository is for producing math/statistics study materials that combine:
 ## Core Rules
 
 - Use `uv` for all Python execution in this repository.
-- Prefer the project-local environment and locked dependencies under `python_env/`.
+- Prefer the project-local environment and locked dependencies under `setup/`.
 - Do not assume external OCR tooling is available or required for the statistics skills unless a skill explicitly instructs it.
 
 ## Environment Expectations
@@ -25,7 +25,7 @@ This repository is for producing math/statistics study materials that combine:
 
 - Run scripts as `uv run python <script>.py ...` unless the script is directly invoked by a repository wrapper that already uses `uv`.
 - When generating plots that include Japanese text, ensure `matplotlib_fontja` is imported.
-- Respect the locked dependency set in `python_env/requirements.lock` when changing Python dependencies.
+- Respect the locked dependency set in `setup/requirements.lock` when changing Python dependencies.
 
 ## TeX Conventions
 

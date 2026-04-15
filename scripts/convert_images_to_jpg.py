@@ -1,11 +1,4 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "Pillow>=10.0.0",
-#   "pillow-heif>=0.16.0",
-# ]
-# ///
+#!/usr/bin/env python3
 
 from __future__ import annotations
 

@@ -204,30 +204,30 @@ uv run plot_normal_dist.py
 
 ### Python Environment Setup
 
-Use the shared repository Python environment in `python_env/`.
+Use the shared repository Python environment defined under `setup/`.
 
 If only the Python plotting / figure-extraction environment is needed:
 
 ```bash
-bash python_env/setup.sh
+bash setup/setup_mac.sh
 ```
 
 If the machine itself still needs TeX/uv setup, use the higher-level OS bootstrap script instead:
 
 ```bash
-bash scripts/setup_mac.sh
+bash setup/setup_mac.sh
 ```
 
 or on Windows:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/setup_windows.ps1
+powershell -ExecutionPolicy Bypass -File setup/setup_windows.ps1
 ```
 
 The relationship is:
 
-- `python_env/setup.sh` sets up the shared Python environment used by multiple skills.
-- `scripts/setup_mac.sh` and `scripts/setup_windows.ps1` are broader machine setup entry points and call into the shared Python setup as one step.
+- `setup/requirements.lock` defines the shared Python dependencies used by multiple skills.
+- `setup/setup_mac.sh` and `setup/setup_windows.ps1` are the machine setup entry points that create `.venv` and sync those shared dependencies.
 
 The shared Python environment creates a `.venv` with:
 

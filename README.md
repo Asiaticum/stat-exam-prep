@@ -4,16 +4,13 @@
 
 - TeX: `LuaLaTeX` + 日本語対応
 - Python: `uv` + `.venv`
-- 描画系: `matplotlib`, `scipy`, `numpy`, `pandas`
-- 日本語描画: `matplotlib_fontja`
 
 セットアップスクリプトは、まだ自分の `.tex` ファイルやノートが何もない状態でも実行できます。スクリプト内部で一時ファイルを使って LuaLaTeX の確認まで自動で行います。
 
 ## Files
 
-- macOS: [scripts/setup_mac.sh](./scripts/setup_mac.sh)
-- Windows: [scripts/setup_windows.ps1](./scripts/setup_windows.ps1)
-- Python only: [python_env/setup.sh](./python_env/setup.sh)
+- macOS: [setup/setup_mac.sh](./setup/setup_mac.sh)
+- Windows: [setup/setup_windows.ps1](./setup/setup_windows.ps1)
 
 ## What Gets Installed
 
@@ -22,7 +19,7 @@
 - `uv`
 - Python `3.12`
 - project local virtual environment: `.venv`
-- locked dependencies from `python_env/requirements.lock`
+- locked dependencies from `setup/requirements.lock`
 
 主な Python パッケージ:
 
@@ -61,7 +58,7 @@ Windows:
 ### macOS
 
 ```bash
-bash ./scripts/setup_mac.sh
+bash ./setup/setup_mac.sh
 ```
 
 このスクリプトが行うこと:
@@ -79,7 +76,7 @@ bash ./scripts/setup_mac.sh
 PowerShell を管理者権限で開いて実行してください。
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File ".\scripts\setup_windows.ps1"
+powershell -ExecutionPolicy Bypass -File ".\setup\setup_windows.ps1"
 ```
 
 このスクリプトが行うこと:

@@ -91,7 +91,18 @@ install_texlive_packages() {
 
 run_python_setup() {
     echo "Python 環境をセットアップします..."
-    bash "$PROJECT_ROOT/python_env/setup.sh"
+    echo "Installing Python 3.12 with uv..."
+    uv python install 3.12
+
+    if [ ! -d "$PROJECT_ROOT/.venv" ]; then
+        echo "Creating the project virtual environment..."
+        uv venv --python 3.12 --seed "$PROJECT_ROOT/.venv"
+    else
+        echo "The project virtual environment already exists."
+    fi
+
+    echo "Syncing dependencies from requirements.lock..."
+    uv pip sync --python "$PROJECT_ROOT/.venv/bin/python" "$PROJECT_ROOT/setup/requirements.lock"
 }
 
 run_latex_smoke_test() {

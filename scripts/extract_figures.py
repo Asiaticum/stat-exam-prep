@@ -3,7 +3,7 @@
 PP-DocLayoutV3 (HuggingFace transformers) を直接使用。glmocr SDK 不要。
 
 Usage:
-    python extract_figures.py <image_or_dir> [-o output_dir] [--threshold 0.3] [--visualize] [--json]
+    python scripts/extract_figures.py <image_or_dir> [-o output_dir] [--threshold 0.3] [--visualize] [--json]
 """
 
 from __future__ import annotations

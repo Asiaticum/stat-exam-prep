@@ -4,9 +4,9 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  ./scripts/sync_skills.sh .claude
-  ./scripts/sync_skills.sh .agent
-  ./scripts/sync_skills.sh .agents
+  ./setup/sync_skills.sh .claude
+  ./setup/sync_skills.sh .agent
+  ./setup/sync_skills.sh .agents
 
 Behavior:
   - Copies <source>/skills to the other two folders' skills directories.

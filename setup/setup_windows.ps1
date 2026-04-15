@@ -178,7 +178,7 @@ function Run-PythonSetup {
         & uv venv --python 3.12 --seed (Join-Path $ProjectRoot ".venv")
     }
 
-    & uv pip sync --python $venvPython (Join-Path $ProjectRoot "python_env\requirements.lock")
+    & uv pip sync --python $venvPython (Join-Path $ProjectRoot "setup\requirements.lock")
 }
 
 function Run-LatexSmokeTest {

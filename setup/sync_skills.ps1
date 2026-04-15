@@ -9,9 +9,9 @@ $ErrorActionPreference = "Stop"
 function Show-Usage {
     @"
 Usage:
-  .\scripts\sync_skills.ps1 .claude
-  .\scripts\sync_skills.ps1 .agent
-  .\scripts\sync_skills.ps1 .agents
+  .\setup\sync_skills.ps1 .claude
+  .\setup\sync_skills.ps1 .agent
+  .\setup\sync_skills.ps1 .agents
 
 Behavior:
   - Copies <source>/skills to the other two folders' skills directories.
