@@ -15,6 +15,30 @@ function Add-ToPathIfExists {
     }
 }
 
+function Add-ToUserPathIfExists {
+    param([string]$PathEntry)
+
+    if (-not (Test-Path $PathEntry)) {
+        return
+    }
+
+    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    $pathEntries = @()
+    if (-not [string]::IsNullOrWhiteSpace($userPath)) {
+        $pathEntries = $userPath -split ";" |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    }
+
+    $alreadyPresent = $pathEntries |
+        Where-Object { $_.TrimEnd("\") -ieq $PathEntry.TrimEnd("\") } |
+        Select-Object -First 1
+
+    if (-not $alreadyPresent) {
+        $newUserPath = @($PathEntry) + $pathEntries -join ";"
+        [Environment]::SetEnvironmentVariable("Path", $newUserPath, "User")
+    }
+}
+
 function Find-TeXLiveBin {
     $candidateRoots = @("C:\texlive", (Join-Path $env:SystemDrive "texlive"))
 
@@ -55,6 +79,7 @@ function Ensure-TeXLive {
     $existingTeXBin = Find-TeXLiveBin
     if ($existingTeXBin) {
         Add-ToPathIfExists $existingTeXBin
+        Add-ToUserPathIfExists $existingTeXBin
     }
 
     if (Get-Command lualatex -ErrorAction SilentlyContinue) {
@@ -151,6 +176,7 @@ tlpdbopt_install_srcfiles 0
     }
 
     Add-ToPathIfExists $texBin
+    Add-ToUserPathIfExists $texBin
 
     if (-not (Get-Command lualatex -ErrorAction SilentlyContinue)) {
         throw "TeX Live was installed, but lualatex is still not on PATH. Please restart PowerShell and try again."
@@ -256,13 +282,14 @@ Run-LatexSmokeTest
 $texBin = Find-TeXLiveBin
 if ($texBin) {
     Add-ToPathIfExists $texBin
+    Add-ToUserPathIfExists $texBin
 }
 
 Write-Host ""
 Write-Host "Setup completed successfully."
 Write-Host ""
 Write-Host "Next steps:"
-Write-Host "  1. Open a new PowerShell session so PATH changes are applied."
+Write-Host "  1. Open a new PowerShell session so the persisted PATH changes are applied."
 Write-Host "  2. If you want to activate the project virtual environment, run:"
 Write-Host "     .\.venv\Scripts\Activate.ps1"
 Write-Host "  3. The Python smoke test has already been completed by this script."
