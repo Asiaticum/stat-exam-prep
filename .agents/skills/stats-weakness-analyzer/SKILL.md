@@ -1,7 +1,6 @@
 ---
 name: stats-weakness-analyzer
 description: Analyzes incorrect answers from the Statistical Test Grade Pre-1 workbook or past-exam materials, identifies core weaknesses, provides necessary formulas, generates visual explanations, creates similar practice problems, and compiles everything into a LaTeX PDF document in a dedicated directory. Use this skill when the user wants a dedicated weakness-remediation handout, for example "〇〇の苦手対策資料を作成して", especially after reviewing a workbook or past-exam explanation.
-license: MIT
 ---
 
 # Statistics Pre-1 Weakness Analyzer
@@ -23,6 +22,8 @@ Before starting, apply this triage:
 ### 1. Identify the Problem and Context
 *   Locate the original problem in the corresponding LaTeX file within the `src/` directory.
 *   Understand the entire context of the problem, the correct solution, and where the user might have gone wrong (especially if they shared their thought process).
+*   Classify the weakness into one or more categories: concept definition, problem-type recognition, formula/theorem selection, assumption checking, algebra/calculus execution, probabilistic/statistical interpretation, or exam strategy.
+*   Identify the smallest prerequisite idea that would unlock the problem. Do not reteach an entire chapter when one missing condition or distinction is the real bottleneck.
 *   If the user provides an image folder instead of a text reference, first normalize the images using the shared conversion script: `uv run .agents/shared/statistics-scripts/run_tool.py convert_to_jpg {relative_path}`. Pass the path relative to `images/`, and keep nested subdirectories if present. This Python wrapper automatically detects the OS and delegates to the shared implementation under `.agents/shared/statistics-scripts/`.
 
 ### 2. Output Structure & Output Files
@@ -36,11 +37,13 @@ The content MUST use the following four sections in order, in both your chat res
 #### ① 苦手分析 (Weakness Analysis)
 *   **Identify the Root Cause:** Pinpoint exactly what conceptual misunderstanding, theoretical gap, or calculation error likely led to the mistake.
 *   **Conceptual Shift:** Explain *why* this gap is a common pitfall. Point out what the user needs to shift in their mental model to stop making this exact mistake.
+*   **Repair Target:** State one concrete skill the learner should be able to do after reading the handout, such as "尤度から対数尤度を作る条件を見分ける" or "片側検定と両側検定の棄却域を区別する".
 
 #### ② 覚えるべき公式 (Formulas to Memorize)
 *   List explicitly the formulas and theorems that are essential for solving this type of problem.
 *   Include not just the mathematical formula, but a brief note on **when to use it (適用条件)** and the **meaning of its variables (変数の意味)**.
 *   Use standard LaTeX formatting for all math blocks.
+*   Add a compact "do not use when" note for formulas that are commonly over-applied.
 
 #### ③ ビジュアル解説 (Visual Explanation for Intuition)
 *   **Visual Strategy:** Math without intuition is hard to remember. Devise a visual way to explain the core concept (e.g., probability distribution shapes, integration regions, regression lines, confidence intervals, geometry of vectors).
@@ -67,6 +70,7 @@ The content MUST use the following four sections in order, in both your chat res
 *   **Generate a New Problem:** Create a brand new problem that tests the *exact same concept* but with different numbers, a slightly different real-world scenario, or by solving for a different variable.
 *   **Match Difficulty:** Keep the difficulty level identical to the original Grade Pre-1 problem.
 *   **Provide Solution:** Provide a complete, step-by-step detailed solution for the new similar problem. Explicitly demonstrate how to apply the formulas from step ② and how to avoid the trap identified in step ①.
+*   **Variation Ladder:** When useful, add one extra "if time permits" mini-variation that changes only one feature, such as one-sided to two-sided, known to unknown variance, or discrete to continuous. Explain how the solution choice changes.
 
 ### 3. Compile LaTeX Document
 *   **Create `.tex` File:** In the created directory, create a `.tex` file (e.g., `weakness-q2-3.tex`). Use the standard `jlreq` document class. Do not use `tcolorbox` or other boxed section containers.
@@ -89,6 +93,17 @@ The content MUST use the following four sections in order, in both your chat res
 *   **Encouraging but Rigorous:** Acknowledge that the concept is advanced (Grade Pre-1), but be uncompromising on mathematical correctness. Act as an expert tutor.
 *   **Language:** All communication MUST be in natural, professional Japanese.
 *   **Clarity:** Break down complex derivations into smaller, logical steps. Never skip algebraic manipulations that might confuse the user.
+
+## Learning Repair Checklist
+
+Before compiling and delivering, verify that the handout:
+
+- Names the root cause in one sentence, not just the topic name.
+- Teaches the minimum prerequisite needed to repair that root cause.
+- Distinguishes the correct method from the closest tempting wrong method.
+- Includes formulas with usage conditions, variable meanings, and non-usage warnings.
+- Provides at least one active-recall prompt the learner can answer without notes.
+- Uses the similar problem to test the repaired skill, not an unrelated adjacent topic.
 
 ## Relationship to Other Skills
 

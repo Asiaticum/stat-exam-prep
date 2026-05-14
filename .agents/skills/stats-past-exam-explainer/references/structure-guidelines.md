@@ -12,20 +12,26 @@ State the solving plan before diving into formulas.
 2. 詳細なステップバイステップ解答
 Show all intermediate calculations and explain why each transformation is valid.
 
-## Part B: ウィークポイント攻略
+3. 解法の見抜き方
+State the exam cue that identifies the method: wording, assumptions, data shape, requested quantity, or available statistics.
+
+## Part B: 学習定着パート
 
 Recommended flow:
 
-1. あなたのつまずきポイント
+1. つまずきポイント
 State the likely root cause of the user's error clearly.
 
 2. 知識のアップデート
 Use bullets for triggers, formulas, boundary conditions, and contrastive learning.
 
-3. 直感的ビジュアル解説
+3. 一問一答チェック
+Add 2-3 short active-recall questions and answers that target recognition, formula choice, and interpretation.
+
+4. 直感的ビジュアル解説
 Explain both the figure itself and the mathematical idea it clarifies.
 
-4. 類題による定着確認
+5. 類題による定着確認
 Create one new problem that targets the same conceptual weakness and solve it fully.
 
 ## Style
@@ -34,3 +40,4 @@ Create one new problem that targets the same conceptual weakness and solve it fu
 - Prefer headings, bullets, short paragraphs, and occasional horizontal rules.
 - Keep formulas close to the explanation they support.
 - If a figure is central, reference it explicitly in nearby text.
+- Make transfer explicit: say why the similar problem uses the same underlying structure as the original.

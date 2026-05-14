@@ -1,7 +1,6 @@
 ---
 name: stats-past-exam-explainer
 description: Analyzes past exam problems for the Statistical Test Grade Pre-1 and creates comprehensive explanation materials in a structured LaTeX PDF document in a dedicated directory. Use this skill when the user asks for a past-exam explanation such as "過去問解説" or wants a full write-up of a specific past exam problem. After delivering the explanation, optionally suggest the weakness-analyzer only if the user still seems stuck and might want a separate weakness-remediation handout.
-license: MIT
 ---
 
 # Statistics Pre-1 Past Exam Explainer
@@ -23,6 +22,7 @@ When a user asks about a past exam problem (e.g., "2021年6月の問1を教え�
 - **When text/reference is provided:**
   - Retrieve the problem statement or context to the best of your knowledge.
 - **In all cases:** Infer the likely conceptual sticking point behind the mistake, but treat that as support for the explanation. Do not expand it into a separate weakness-analysis document unless the user later asks for one.
+- **Diagnostic Lens:** Classify the main learning issue before writing: problem-type recognition, formula selection, condition checking, derivation mechanics, interpretation of the result, or time-saving exam strategy. Use this classification to decide which parts need extra scaffolding.
 
 ### 2. Output Structure & Output Files
 
@@ -45,10 +45,12 @@ This part focuses on clearly explaining the problem itself.
 - **③ つまずきやすいポイント (Common Stumbling Blocks):**
   - Briefly note the likely misunderstanding or trap that often causes errors on this problem.
   - Keep this section compact and explanatory. It is not a substitute for a dedicated weakness-analysis document.
+  - Include the smallest useful correction: what thought pattern to replace, and what cue should trigger the correct thought next time.
 - **④ 知識の補強メモ (Knowledge Reinforcement):**
   - **着眼点 (Triggers):** Explicitly verbalize the rule. "If you see 'condition X', you should immediately consider 'Y'".
   - **必須公式 (Required Formulas):** List the necessary formulas, exactly when to use them, and the definitions of their variables.
   - **比較学習 (Contrastive Learning):** Compare the correct method with a typical wrong approach when that comparison would improve understanding.
+  - **一問一答チェック:** Add 2-3 brief recall questions that test the key trigger, formula condition, and interpretation.
 - **⑤ 直感的ビジュアル解説 (Visual Explanation for Intuition):**
   - **Choose the Right Drawing Method:** Prefer **TikZ** for concept diagrams, flowcharts, distribution-selection maps, dependency diagrams, and any figure where text layout and mathematical notation quality matter more than sampled numeric geometry. Use a custom Python script only for numerically generated plots such as density curves, shaded rejection regions, simulation visuals, scatter plots, histograms, and other data-driven graphics.
   - **If Python is needed:** Write a custom Python script to generate the graph. Save it in the new directory (e.g., `src/past-exams/2021-06-q1/plot_weakness.py`).
@@ -59,6 +61,7 @@ This part focuses on clearly explaining the problem itself.
 - **⑥ 類題による定着確認 (Similar Practice Problem):**
   - Generate a brand new problem that tests the _exact same concept_ targeted at the weakness, but with different numbers or a slightly different context.
   - Provide a complete solution for the new problem to solidify the learning.
+  - Include one sentence explaining why this new problem is structurally the same as the original, so transfer is explicit.
 
 ### 2.5. Post-Delivery UX: Optional Handoff to Weakness Analyzer
 
@@ -100,3 +103,14 @@ After you finish the explanation material, decide the next step as follows:
 - **Encouraging but Rigorous:** Acknowledge that the concept is advanced (Grade Pre-1), but be uncompromising on mathematical correctness. Act as an expert tutor.
 - **Language:** All communication MUST be in natural, professional Japanese.
 - **Clarity:** Always prioritize the user's understanding of the _underlying principle_ over just finishing the problem. Break down complex derivations into smaller, logical steps. Never skip algebraic manipulations that might confuse the user.
+
+## Pedagogical Quality Checklist
+
+Before compiling and delivering, verify that the explanation:
+
+- Makes the problem-type recognition cue explicit before the derivation.
+- Explains why each chosen formula or theorem applies, including assumptions.
+- Shows enough algebra that a learner can reproduce the solution independently.
+- Separates "what to memorize" from "how to decide when to use it".
+- Includes at least one contrast with a plausible wrong method when confusion is likely.
+- Ends with a transfer-oriented similar problem and complete solution.

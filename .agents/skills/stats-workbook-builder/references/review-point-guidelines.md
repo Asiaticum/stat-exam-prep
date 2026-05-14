@@ -25,10 +25,17 @@ Name common mistakes, such as parameter confusion, sign errors, or misuse of asy
 5. Connections
 Link the problem to adjacent topics such as likelihood, sufficiency, CLT, hypothesis testing, regression, stochastic processes, or Bayesian reasoning.
 
+6. Recognition Cue
+State how to notice this problem type on an exam. Mention key wording, given quantities, distributional assumptions, or graph features.
+
+7. Self-Check
+End with one short question the learner can answer from memory, such as "なぜこの問題では不偏分散を使うのか" or "この近似を使う条件は何か".
+
 ## Style
 
 - Prefer bullets over dense paragraphs.
 - Keep notation consistent with the problem statement.
 - If a formula is central, show it explicitly.
 - If a visual interpretation matters, describe the graph or shape in words even when a figure is included.
+- When a common confusion exists, contrast the correct method with the nearby wrong method in a compact table or two bullets.
 - Do not use boxed callouts. Plain headings and lists are sufficient.

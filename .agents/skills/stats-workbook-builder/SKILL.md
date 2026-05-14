@@ -1,7 +1,6 @@
 ---
 name: stats-workbook-builder
 description: Converts problem images into a detailed LaTeX workbook specifically designed for Statistical Test Grade Pre-1 (統計検定準一級) preparation. Focuses on maximizing learning effectiveness through detailed explanations, strategic review points, and conceptual connections. After delivering the workbook, it may optionally suggest the weakness-analyzer if the user still wants a separate weakness-remediation handout for a specific topic.
-license: MIT
 ---
 
 # Statistics Pre-1 Workbook Builder
@@ -21,9 +20,11 @@ This skill is specialized for creating high-quality study materials for the **St
     - **Ignore**: Non-problem text (dates, page numbers, unrelated scribbles). Focus purely on the mathematical content.
 3.  **Enhance Content (The Learning Strategy)**:
     - **Detailed Solutions**: Expand the original solution. Do not skip steps. Explain _why_ a particular transformation or formula is used.
+    - **Learner Diagnosis**: For each problem, infer the most likely conceptual obstacle before writing the solution: definition recall, formula selection, algebra/calculus execution, condition checking, interpretation, or exam-time strategy. Use that diagnosis to decide what to emphasize.
     - **Visual Aids**: Choose the drawing method intentionally. Prefer **TikZ** for concept diagrams, flowcharts, dependency diagrams, estimator-selection maps, and any figure where mathematical notation and label placement matter more than sampled numeric geometry. Use custom Python scripts only for numerically generated plots such as distributions, confidence intervals, rejection regions, scatter plots, histograms, simulations, and other data-driven graphics. Place any custom scripts alongside the `.tex` files for clarity and reproducibility.
     - **Conceptual Connections**: Link the problem to broader statistical concepts (e.g., "This is an application of the Central Limit Theorem," or "This relates to the properties of MLE").
-    - **Review Points**: Create a specific "Review Point" section for _every_ problem.
+    - **Active Recall Prompts**: Add short prompts in the solution or review point that make the learner retrieve the key idea before seeing the final rule, such as "ここで確認: なぜ正規分布ではなく t 分布を使うか".
+    - **Review Points**: Create a specific "Review Point" section for _every_ problem, including how to recognize the same pattern in a new problem.
 4.  **Directory Structure & File Naming**:
     - **Self-Determine**: The AI agent must decide the correct `{ChapterNumber}-{Topic}` based on the analysis of the images (e.g., if the problem is about "Distributions", use `2-distributions`).
     - **Root Directory**: Create a `src/textbook` directory if it doesn't exist.
@@ -60,7 +61,7 @@ To ensure the user can **master the topic without referring to a textbook**, sol
 
 ### 2. Explicit Intermediate Steps
 
-- Nevers skip algebraic manipulations.
+- Never skip algebraic manipulations.
 - _Bad_: "Substituting values, we get 0.05."
 - _Good_: "Substituting $\bar{x}=5, \mu=0, s=2, n=16$:
   $$ t = \frac{5 - 0}{2 / \sqrt{16}} = \frac{5}{0.5} = 10 $$"
@@ -74,6 +75,24 @@ To ensure the user can **master the topic without referring to a textbook**, sol
   - **Pitfalls**: Explicitly mention common mistakes.
   - **Visuals**: Describe the shape of distributions or properties.
 - **Reference**: Use `.agents/skills/stats-workbook-builder/references/review-point-guidelines.md` as the local reference for Review Point depth and structure.
+
+### 4. Transfer and Exam Readiness
+
+- Add one compact "recognition cue" for every problem: what wording, statistic, graph, or condition should make the learner choose this method.
+- When two methods are easily confused, include a one- or two-row contrast table such as "use this when..." versus "do not use this when...".
+- End each solution with a brief self-check question that the learner can answer without looking back at the derivation.
+- Keep these additions concise. They should deepen learning without turning every problem into a separate lecture.
+
+### 5. Solution Quality Checklist
+
+Before compiling, verify that each solution:
+
+- States the solving strategy before calculation.
+- Names the theorem, distribution, estimator, or testing framework being used.
+- Checks required assumptions or applicability conditions when relevant.
+- Shows substitutions and algebraic transformations explicitly.
+- Interprets the final numeric or symbolic answer in the language of the problem.
+- Includes a review point with definition, intuition, pitfall, and transfer cue.
 
 ## Configuration & Style Guide
 
